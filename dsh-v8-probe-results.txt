@@ -1,0 +1,14 @@
+﻿DSH Desktop V8 flag probe
+executable: C:\Users\wang\AppData\Local\Programs\DSH Desktop Beta\DSH Desktop Beta.exe
+hold: 14s per combination
+
+jitless (decisive test): CRASHED within 14s
+jitless + wasm off: CRASHED within 14s
+no-opt: CRASHED within 14s
+no-opt + wasm off: CRASHED within 14s
+wasm off + tiny heap: CRASHED within 14s
+no-incremental-marking + wasm off: CRASHED within 14s
+single-threaded: CRASHED within 14s
+default: CRASHED within 14s
+
+WINNER: none survived

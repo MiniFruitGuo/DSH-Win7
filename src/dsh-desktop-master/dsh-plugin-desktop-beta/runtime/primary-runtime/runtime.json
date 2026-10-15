@@ -1,0 +1,24 @@
+{
+  "desktopVersion": "2.0.17-beta.1",
+  "platform": "win32",
+  "arch": "x64",
+  "python": "3.8.10",
+  "node": "22.20.0",
+  "pnpm": "11.7.0",
+  "pythonPackages": {
+    "numpy": "1.24.4",
+    "pandas": "2.0.3",
+    "python-dateutil": "2.9.0.post0",
+    "pytz": "2026.5",
+    "six": "1.17.0",
+    "tzdata": "2026.5",
+    "python-docx": "1.1.2",
+    "python-pptx": "1.0.2",
+    "openpyxl": "3.1.5",
+    "Pillow": "10.4.0",
+    "lxml": "5.2.2",
+    "XlsxWriter": "3.2.9",
+    "typing_extensions": "4.13.2",
+    "et_xmlfile": "2.0.0"
+  }
+}
