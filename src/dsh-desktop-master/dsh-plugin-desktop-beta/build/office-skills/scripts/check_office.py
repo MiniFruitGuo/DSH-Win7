@@ -126,8 +126,8 @@ def inspect_docx(xml: dict[str, ET.Element]) -> tuple[dict, str]:
         size = section.find(f"{w}pgSz")
         margins = section.find(f"{w}pgMar")
         sections.append({
-            "page_twips": {} if size is None else {key.removeprefix(w): value for key, value in size.attrib.items()},
-            "margins_twips": {} if margins is None else {key.removeprefix(w): value for key, value in margins.attrib.items()},
+            "page_twips": {} if size is None else {(key[len(w):] if key.startswith(w) else key): value for key, value in size.attrib.items()},
+            "margins_twips": {} if margins is None else {(key[len(w):] if key.startswith(w) else key): value for key, value in margins.attrib.items()},
         })
     text_parts = [body]
     for kind in ("header", "footer"):
