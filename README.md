@@ -1,4 +1,4 @@
-# DSH Desktop for Windows 7 SP1
+# Deepseek Harness (DSH) Desktop for Windows 7 SP1
 
 Windows 7 SP1 (64-bit) build of DSH Desktop, adapted from the upstream Electron 44 product so that
 it runs, and keeps running, on the last OS that still ships Electron support.
