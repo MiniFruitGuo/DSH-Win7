@@ -72,4 +72,10 @@ describe('localPluginTargetsAsFiles', () => {
     result.push('extra')
     expect(argv).toEqual(['add', 'dsh-computer-use@0.3.2'])
   })
+it('rewrites for install and i as well as add', () => {
+    const dir = directory()
+    expect(localPluginTargetsAsFiles(['install', dir])).toEqual(['install', `file:${dir}`])
+    const other = directory()
+    expect(localPluginTargetsAsFiles(['i', other])).toEqual(['i', `file:${other}`])
+  })
 })

@@ -26,6 +26,7 @@ import {
 } from './mac-universal.ts'
 import { applyNode16ShellRewrites, type ShellRewriteReport } from './node16-shell-shims.ts'
 import { applyNode16ExportPolyfills } from './node16-export-polyfills.ts'
+import { installLocalPluginTargetPatch } from './plugin-install-targets.ts'
 
 /** Resolve a package root even when its exports hide `package.json`. */
 export function resolveRuntimePackageRoot(
@@ -1001,6 +1002,13 @@ export function installNode16ShellShims(context: PackagedRuntimeContext): ShellR
   const polyfills = applyNode16ExportPolyfills(root)
   if (polyfills.rewritten.length > 0) {
     console.log(`dsh-plugin-desktop: applied ${String(polyfills.rewritten.length)} Node 16.16 export polyfills`)
+  }
+  // A plugin installed from a local directory must land inside the Profile. The plugin-manager runs
+  // in the Host process and reaches pnpm through its own CLI path, so this cannot be done from the
+  // Desktop shell.
+  const pluginTargets = installLocalPluginTargetPatch(root)
+  if (pluginTargets.rewritten.length > 0) {
+    console.log('dsh-plugin-desktop: local plugin targets are installed as file: instead of link:')
   }
   return applyNode16ShellRewrites(root)
 }

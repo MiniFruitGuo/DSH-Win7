@@ -203,6 +203,23 @@ export interface Node16ExportPolyfillReport {
   readonly rewritten: readonly string[]
 }
 
+/**
+ * Insert a preamble without displacing a leading shebang.
+ *
+ * `#!` is only a comment when it is the very first line; anything prepended ahead of it turns the
+ * whole file into a syntax error. Executable entries such as the LibreOffice Kit CLI start with one,
+ * so the preamble goes after it.
+ * @param text - the file's current contents.
+ * @param preamble - the code to place at the top of the executable body.
+ * @returns the contents with the preamble inserted in the right position.
+ */
+function withPreamble(text: string, preamble: string): string {
+  if (!text.startsWith('#!')) return `${preamble}\n${text}`
+  const end = text.indexOf('\n')
+  if (end === -1) return `${text}\n${preamble}\n`
+  return `${text.slice(0, end + 1)}${preamble}\n${text.slice(end + 1)}`
+}
+
 function patchFile(path: string): readonly string[] {
   let text: string
   try {
@@ -219,7 +236,7 @@ function patchFile(path: string): readonly string[] {
     const preamble = webNeeded
       .map(item => `// Renderer compatibility (Chromium 106, Electron 21): ${item.trigger}\n${item.code}`)
       .join('\n')
-    text = `${preamble}\n${text}`
+    text = withPreamble(text, preamble)
     changed.push(...webNeeded.map(item => `${path} <- web: ${item.trigger}`))
   }
 
@@ -252,7 +269,7 @@ function patchFile(path: string): readonly string[] {
       const header = [...needed]
         .map(name => `// Node 16.16 compatibility: ${name}\n${POLYFILLS[name] ?? `const ${name} = undefined;`}`)
         .join('\n')
-      text = `${header}\n${rewritten}`
+      text = withPreamble(rewritten, header)
       changed.push(...[...needed].map(name => `${path} <- ${name}`))
     }
   }

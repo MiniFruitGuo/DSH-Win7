@@ -123,8 +123,11 @@ function validatedExternalMarketArgv(argv: readonly string[]): string[] {
  */
 const HAS_SCHEME = /^[A-Za-z][A-Za-z0-9+.-]+:/u
 
+/** The install commands that take their packages as positionals. */
+const INSTALL_COMMANDS = new Set(['add', 'install', 'i'])
+
 /**
- * Rewrite a bare local directory target of `add` to the `file:` protocol.
+ * Rewrite a bare local directory target of an install command to the `file:` protocol.
  *
  * `add <dir>` is recorded by pnpm as `link:<dir>`, a projection that points at that directory instead
  * of installing it: the package is never copied into the Profile, so it breaks as soon as the
@@ -137,11 +140,15 @@ const HAS_SCHEME = /^[A-Za-z][A-Za-z0-9+.-]+:/u
  * keeps working with no network. Only a target that is an absolute path to an existing directory is
  * touched: npm names, relative specifiers, anything already carrying a scheme, and every switch are
  * passed through untouched.
- * @param argv - the `add` argument vector, without the leading executable.
+ *
+ * This covers the Desktop-side path only. The running plugin-manager reaches pnpm through the Host's
+ * own CLI, so the same rewrite is applied to it at packaging time by
+ * `scripts/plugin-install-targets.ts`; keep the two in step.
+ * @param argv - the install argument vector, without the leading executable.
  * @returns the same vector with bare local directory targets rewritten.
  */
 export function localPluginTargetsAsFiles(argv: readonly string[]): string[] {
-  if (argv[0] !== 'add') return [...argv]
+  if (!INSTALL_COMMANDS.has(argv[0] ?? '')) return [...argv]
   return argv.map((argument, index) => {
     if (index === 0 || argument.startsWith('-') || HAS_SCHEME.test(argument)) return argument
     if (!isAbsolute(argument)) return argument
